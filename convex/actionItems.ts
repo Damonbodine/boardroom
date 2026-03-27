@@ -8,7 +8,7 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     let items;
     if (args.status) {
@@ -20,7 +20,14 @@ export const list = query({
       items = await ctx.db.query("actionItems").order("desc").collect();
     }
 
-    return items;
+    const enriched = await Promise.all(
+      items.map(async (item) => {
+        const assignee = await ctx.db.get(item.assigneeId);
+        return { ...item, assigneeName: assignee?.name ?? "Unknown" };
+      })
+    );
+
+    return enriched;
   },
 });
 
@@ -28,7 +35,7 @@ export const listByMeeting = query({
   args: { meetingId: v.id("meetings") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     return await ctx.db
       .query("actionItems")
@@ -44,7 +51,7 @@ export const listByAssignee = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     let items = await ctx.db
       .query("actionItems")
@@ -63,7 +70,7 @@ export const listOverdue = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     const now = Date.now();
     const items = await ctx.db

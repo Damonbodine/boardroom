@@ -34,20 +34,19 @@ export function MeetingForm({ meetingId, defaultValues }: MeetingFormProps) {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
-    const data = {
-      title: formData.get("title") as string,
-      description: (formData.get("description") as string) || undefined,
-      date: new Date(formData.get("date") as string).getTime(),
-      startTime: formData.get("startTime") as string,
-      endTime: formData.get("endTime") as string,
-      location: formData.get("location") as string,
-      meetingType: formData.get("meetingType") as "Regular" | "Special" | "Emergency" | "AnnualGeneral",
-    };
+    const title = formData.get("title") as string;
+    const description = (formData.get("description") as string) || undefined;
+    const dateStr = formData.get("date") as string;
+    const startTime = formData.get("startTime") as string;
+    const location = formData.get("location") as string;
+    const meetingType = formData.get("meetingType") as string;
+    // Combine date + startTime into a single timestamp for scheduledAt
+    const scheduledAt = new Date(`${dateStr}T${startTime}`).getTime();
     try {
       if (meetingId) {
-        await updateMeeting({ id: meetingId, ...data });
+        await updateMeeting({ meetingId, title, description, scheduledAt, location, type: meetingType });
       } else {
-        await createMeeting(data);
+        await createMeeting({ title, description, scheduledAt, location, type: meetingType });
       }
       router.push("/meetings");
     } catch (err) {

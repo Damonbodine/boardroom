@@ -1,5 +1,5 @@
 "use client";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,10 +15,12 @@ interface MotionFormProps {
 
 export function MotionForm({ meetingId, onSuccess }: MotionFormProps) {
   const createMotion = useMutation(api.motions.create);
+  const currentUser = useQuery(api.users.getCurrent, {});
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!currentUser) return;
     setLoading(true);
     const formData = new FormData(e.currentTarget);
     try {
@@ -26,6 +28,7 @@ export function MotionForm({ meetingId, onSuccess }: MotionFormProps) {
         meetingId,
         title: formData.get("title") as string,
         description: formData.get("description") as string,
+        movedById: currentUser._id,
       });
       e.currentTarget.reset();
       onSuccess?.();

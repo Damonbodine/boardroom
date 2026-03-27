@@ -6,17 +6,27 @@ export const list = query({
   args: { status: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
+    let committees;
     if (args.status !== undefined) {
       const isActive = args.status === "active";
-      return await ctx.db
+      committees = await ctx.db
         .query("committees")
         .withIndex("by_isActive", (q) => q.eq("isActive", isActive))
         .collect();
+    } else {
+      committees = await ctx.db.query("committees").collect();
     }
 
-    return await ctx.db.query("committees").collect();
+    const enriched = await Promise.all(
+      committees.map(async (c) => {
+        const chair = await ctx.db.get(c.chairId);
+        return { ...c, chair: chair ? { name: chair.name } : null };
+      })
+    );
+
+    return enriched;
   },
 });
 
@@ -24,7 +34,7 @@ export const get = query({
   args: { committeeId: v.id("committees") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return null;
 
     const committee = await ctx.db.get(args.committeeId);
     if (!committee) throw new Error("NOT_FOUND");
@@ -49,6 +59,7 @@ export const create = mutation({
   args: {
     name: v.string(),
     description: v.optional(v.string()),
+    purpose: v.optional(v.string()),
     chairId: v.optional(v.id("users")),
   },
   handler: async (ctx, args) => {
@@ -60,7 +71,7 @@ export const create = mutation({
       name: args.name,
       description: args.description,
       chairId: args.chairId ?? currentUser._id,
-      purpose: args.description ?? "",
+      purpose: args.purpose ?? args.description ?? "",
       isActive: true,
       createdAt: now,
       updatedAt: now,

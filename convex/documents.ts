@@ -10,7 +10,7 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     const user = await ctx.db
       .query("users")
@@ -45,7 +45,14 @@ export const list = query({
       );
     }
 
-    return docs;
+    const enriched = await Promise.all(
+      docs.map(async (doc) => {
+        const uploadedBy = await ctx.db.get(doc.uploadedById);
+        return { ...doc, uploadedBy: uploadedBy ? { name: uploadedBy.name } : null };
+      })
+    );
+
+    return enriched;
   },
 });
 
@@ -53,7 +60,7 @@ export const get = query({
   args: { documentId: v.id("documents") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return null;
 
     const doc = await ctx.db.get(args.documentId);
     if (!doc) throw new Error("NOT_FOUND");
