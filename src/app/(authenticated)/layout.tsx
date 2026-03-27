@@ -1,16 +1,7 @@
-"use client";
-import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AuthenticatedShell } from "./authenticated-shell";
+
+export const dynamic = 'force-dynamic';
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <main className="p-8">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+  return <AuthenticatedShell>{children}</AuthenticatedShell>;
 }
