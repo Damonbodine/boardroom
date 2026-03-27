@@ -1,4 +1,30 @@
 import { internalMutation } from "./_generated/server";
+import { v } from "convex/values";
+
+export const createDemoUser = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const clerkId = "user_3BV4YzajQ96nGS3hlBDld9VcLa8";
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
+      .unique();
+    if (existing) return { status: "already_exists", userId: existing._id };
+
+    const now = Date.now();
+    const userId = await ctx.db.insert("users", {
+      clerkId,
+      name: "Demo User",
+      email: "demo@factory512.dev",
+      role: "Admin",
+      isActive: true,
+      lastLoginAt: now,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return { status: "created", userId };
+  },
+});
 
 export const assignClerkIds = internalMutation({
   args: {},
