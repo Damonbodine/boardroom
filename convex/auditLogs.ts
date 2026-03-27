@@ -9,6 +9,8 @@ export const list = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
     const currentUser = await getCurrentUser(ctx);
     requireRole(currentUser.role, ["Admin"]);
 
@@ -42,6 +44,8 @@ export const listByEntity = query({
     entityId: v.string(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
     const currentUser = await getCurrentUser(ctx);
     requireRole(currentUser.role, ["Admin"]);
 

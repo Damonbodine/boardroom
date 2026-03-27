@@ -34,7 +34,7 @@ export function MeetingDetailHeader({ meetingId }: { meetingId: Id<"meetings"> }
 
   const isAdmin = currentUser?.role === "Admin";
 
-  const handleStatusChange = async (status: string) => {
+  const handleStatusChange = async (status: "Scheduled" | "InProgress" | "Completed" | "Cancelled") => {
     await updateStatus({ meetingId, status });
   };
 
@@ -79,12 +79,12 @@ export function MeetingDetailHeader({ meetingId }: { meetingId: Id<"meetings"> }
 
         {isAdmin && (
           <div className="flex items-center gap-2 mt-6 pt-4 border-t">
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/meetings/${meetingId}/edit`}>
+            <Link href={`/meetings/${meetingId}/edit`}>
+              <Button variant="outline" size="sm">
                 <Edit className="h-4 w-4 mr-1.5" />
                 Edit
-              </Link>
-            </Button>
+              </Button>
+            </Link>
             {meeting.status === "Scheduled" && (
               <Button size="sm" onClick={() => handleStatusChange("InProgress")}>
                 <Play className="h-4 w-4 mr-1.5" />

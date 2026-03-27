@@ -38,15 +38,28 @@ export function MeetingForm({ meetingId, defaultValues }: MeetingFormProps) {
     const description = (formData.get("description") as string) || undefined;
     const dateStr = formData.get("date") as string;
     const startTime = formData.get("startTime") as string;
+    const endTime = formData.get("endTime") as string;
     const location = formData.get("location") as string;
-    const meetingType = formData.get("meetingType") as string;
-    // Combine date + startTime into a single timestamp for scheduledAt
-    const scheduledAt = new Date(`${dateStr}T${startTime}`).getTime();
+    const meetingType = formData.get("meetingType") as "Regular" | "Special" | "Emergency" | "AnnualGeneral";
+
+    if (!title || !dateStr || !startTime || !endTime || !location || !meetingType) {
+      return;
+    }
+    if (endTime <= startTime) {
+      alert("End time must be after start time.");
+      setLoading(false);
+      return;
+    }
+
+    // Store the date as a timestamp (midnight local time) and startTime/endTime as plain HH:MM strings
+    // Using Date.UTC to avoid timezone issues — date only, no time component
+    const [year, month, day] = dateStr.split("-").map(Number);
+    const scheduledAt = Date.UTC(year, month - 1, day);
     try {
       if (meetingId) {
-        await updateMeeting({ meetingId, title, description, scheduledAt, location, type: meetingType });
+        await updateMeeting({ meetingId, title, description, scheduledAt, startTime, endTime, location, type: meetingType });
       } else {
-        await createMeeting({ title, description, scheduledAt, location, type: meetingType });
+        await createMeeting({ title, description, scheduledAt, startTime, endTime, location, type: meetingType });
       }
       router.push("/meetings");
     } catch (err) {

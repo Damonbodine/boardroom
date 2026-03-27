@@ -6,12 +6,28 @@ export const listByMeeting = query({
   args: { meetingId: v.id("meetings") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
-    return await ctx.db
+    const motions = await ctx.db
       .query("motions")
       .withIndex("by_meetingId", (q) => q.eq("meetingId", args.meetingId))
       .collect();
+
+    const enriched = await Promise.all(
+      motions.map(async (motion) => {
+        const movedBy = await ctx.db.get(motion.movedById);
+        const secondedBy = motion.secondedById
+          ? await ctx.db.get(motion.secondedById)
+          : null;
+        return {
+          ...motion,
+          movedBy: movedBy ? { name: movedBy.name } : null,
+          secondedBy: secondedBy ? { name: secondedBy.name } : null,
+        };
+      })
+    );
+
+    return enriched;
   },
 });
 
@@ -19,7 +35,7 @@ export const get = query({
   args: { motionId: v.id("motions") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return null;
 
     const motion = await ctx.db.get(args.motionId);
     if (!motion) throw new Error("MOTION_NOT_FOUND");
@@ -156,7 +172,7 @@ export const listPending = query({
   args: { status: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     if (args.status) {
       return await ctx.db

@@ -8,7 +8,7 @@ export default function SignUpPage() {
           <h1 className="font-serif text-3xl font-bold text-primary">Board<span className="text-accent">Room</span></h1>
           <p className="mt-2 text-sm text-muted-foreground">Create your account</p>
         </div>
-        <SignUp afterSignUpUrl="/dashboard" />
+        <SignUp fallbackRedirectUrl="/dashboard" />
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ export function VotingPanel({ motionId }: { motionId: Id<"motions"> }) {
   const isBoardMember = currentUser.role === "BoardMember";
   const canVote = isVoting && isBoardMember;
 
-  const handleVote = async (value: string) => {
+  const handleVote = async (value: "For" | "Against" | "Abstain") => {
     setSubmitting(true);
     try {
       await castVote({ motionId, userId: currentUser._id, value });
@@ -39,7 +39,7 @@ export function VotingPanel({ motionId }: { motionId: Id<"motions"> }) {
     }
   };
 
-  const voteButtons = [
+  const voteButtons: { value: "For" | "Against" | "Abstain"; icon: typeof ThumbsUp; color: string; activeColor: string }[] = [
     { value: "For", icon: ThumbsUp, color: "bg-green-600 hover:bg-green-700 text-white", activeColor: "ring-2 ring-green-600 ring-offset-2" },
     { value: "Against", icon: ThumbsDown, color: "bg-red-600 hover:bg-red-700 text-white", activeColor: "ring-2 ring-red-600 ring-offset-2" },
     { value: "Abstain", icon: MinusCircle, color: "bg-muted-foreground hover:bg-muted-foreground/90 text-white", activeColor: "ring-2 ring-muted-foreground ring-offset-2" },
@@ -66,19 +66,16 @@ export function VotingPanel({ motionId }: { motionId: Id<"motions"> }) {
           </div>
         </div>
 
-        {canVote && (
+        {canVote && !myVote && (
           <div className="pt-4 border-t">
             <p className="text-sm text-muted-foreground mb-3">
-              {myVote ? "Change your vote:" : "Cast your vote:"}
+              Cast your vote:
             </p>
             <div className="flex gap-3">
               {voteButtons.map((btn) => (
                 <Button
                   key={btn.value}
-                  className={cn(
-                    btn.color,
-                    myVote?.vote === btn.value && btn.activeColor
-                  )}
+                  className={cn(btn.color)}
                   disabled={submitting}
                   onClick={() => handleVote(btn.value)}
                 >
@@ -87,6 +84,14 @@ export function VotingPanel({ motionId }: { motionId: Id<"motions"> }) {
                 </Button>
               ))}
             </div>
+          </div>
+        )}
+
+        {canVote && myVote && (
+          <div className="pt-4 border-t">
+            <p className="text-sm text-muted-foreground mb-2">
+              You voted: <span className="font-semibold text-foreground">{myVote.vote}</span>
+            </p>
           </div>
         )}
 

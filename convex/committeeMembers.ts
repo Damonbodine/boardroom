@@ -6,7 +6,7 @@ export const listByCommittee = query({
   args: { committeeId: v.id("committees") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     const members = await ctx.db
       .query("committeeMembers")
@@ -26,7 +26,7 @@ export const listByUser = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     const memberships = await ctx.db
       .query("committeeMembers")

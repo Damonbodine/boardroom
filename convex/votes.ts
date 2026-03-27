@@ -6,7 +6,7 @@ export const listByMotion = query({
   args: { motionId: v.id("motions") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     const votes = await ctx.db
       .query("votes")
@@ -33,11 +33,11 @@ export const cast = mutation({
   args: {
     motionId: v.id("motions"),
     userId: v.id("users"),
-    value: v.string(),
+    value: v.union(v.literal("For"), v.literal("Against"), v.literal("Abstain")),
   },
   handler: async (ctx, args) => {
     const currentUser = await getCurrentUser(ctx);
-    requireRole(currentUser.role, ["BoardMember", "Admin"]);
+    requireRole(currentUser.role, ["BoardMember"]);
 
     const motion = await ctx.db.get(args.motionId);
     if (!motion) throw new Error("MOTION_NOT_FOUND");
@@ -62,7 +62,7 @@ export const cast = mutation({
     const voteId = await ctx.db.insert("votes", {
       motionId: args.motionId,
       memberId: args.userId,
-      vote: args.value as any,
+      vote: args.value,
       castAt: now,
       createdAt: now,
     });
@@ -94,7 +94,7 @@ export const getMyVote = query({
   args: { motionId: v.id("motions") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return null;
 
     const user = await ctx.db
       .query("users")

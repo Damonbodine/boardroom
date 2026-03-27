@@ -62,7 +62,7 @@ export const get = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return null;
     const user = await ctx.db.get(args.userId);
     if (!user) throw new Error("USER_NOT_FOUND");
     return user;
@@ -76,7 +76,7 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     let users;
     if (args.role) {
@@ -133,6 +133,9 @@ export const update = mutation({
     email: v.optional(v.string()),
     role: v.optional(v.string()),
     avatar: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    title: v.optional(v.string()),
     status: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -156,6 +159,9 @@ export const update = mutation({
     if (fields.email !== undefined) updates.email = fields.email;
     if (fields.role !== undefined) updates.role = fields.role;
     if (fields.avatar !== undefined) updates.avatarUrl = fields.avatar;
+    if (fields.avatarUrl !== undefined) updates.avatarUrl = fields.avatarUrl;
+    if (fields.phone !== undefined) updates.phone = fields.phone;
+    if (fields.title !== undefined) updates.title = fields.title;
     if (fields.status !== undefined) updates.isActive = fields.status === "active";
 
     await ctx.db.patch(userId, updates);

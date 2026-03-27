@@ -18,7 +18,7 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     let meetings;
     if (args.status) {
@@ -45,7 +45,7 @@ export const get = query({
   args: { meetingId: v.id("meetings") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return null;
 
     const meeting = await ctx.db.get(args.meetingId);
     if (!meeting) throw new Error("MEETING_NOT_FOUND");
@@ -64,9 +64,11 @@ export const create = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     scheduledAt: v.number(),
+    startTime: v.optional(v.string()),
+    endTime: v.optional(v.string()),
     location: v.optional(v.string()),
     committeeId: v.optional(v.id("committees")),
-    type: v.string(),
+    type: v.union(v.literal("Regular"), v.literal("Special"), v.literal("Emergency"), v.literal("AnnualGeneral")),
   },
   handler: async (ctx, args) => {
     const currentUser = await getCurrentUser(ctx);
@@ -77,10 +79,10 @@ export const create = mutation({
       title: args.title,
       description: args.description,
       date: args.scheduledAt,
-      startTime: new Date(args.scheduledAt).toISOString().slice(11, 16),
-      endTime: "",
+      startTime: args.startTime ?? new Date(args.scheduledAt).toISOString().slice(11, 16),
+      endTime: args.endTime ?? "",
       location: args.location ?? "TBD",
-      meetingType: args.type as any,
+      meetingType: args.type,
       status: "Scheduled",
       minutesApproved: false,
       createdById: currentUser._id,
@@ -100,8 +102,10 @@ export const update = mutation({
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     scheduledAt: v.optional(v.number()),
+    startTime: v.optional(v.string()),
+    endTime: v.optional(v.string()),
     location: v.optional(v.string()),
-    type: v.optional(v.string()),
+    type: v.optional(v.union(v.literal("Regular"), v.literal("Special"), v.literal("Emergency"), v.literal("AnnualGeneral"))),
   },
   handler: async (ctx, args) => {
     const currentUser = await getCurrentUser(ctx);
@@ -110,13 +114,23 @@ export const update = mutation({
     const existing = await ctx.db.get(args.meetingId);
     if (!existing) throw new Error("MEETING_NOT_FOUND");
 
-    const updates: Record<string, any> = { updatedAt: Date.now() };
+    const updates: Partial<{
+      title: string;
+      description: string;
+      date: number;
+      startTime: string;
+      endTime: string;
+      location: string;
+      meetingType: "Regular" | "Special" | "Emergency" | "AnnualGeneral";
+      updatedAt: number;
+    }> = { updatedAt: Date.now() };
     if (args.title !== undefined) updates.title = args.title;
     if (args.description !== undefined) updates.description = args.description;
     if (args.scheduledAt !== undefined) {
       updates.date = args.scheduledAt;
-      updates.startTime = new Date(args.scheduledAt).toISOString().slice(11, 16);
     }
+    if (args.startTime !== undefined) updates.startTime = args.startTime;
+    if (args.endTime !== undefined) updates.endTime = args.endTime;
     if (args.location !== undefined) updates.location = args.location;
     if (args.type !== undefined) updates.meetingType = args.type;
 
@@ -151,7 +165,7 @@ export const remove = mutation({
 export const updateStatus = mutation({
   args: {
     meetingId: v.id("meetings"),
-    status: v.string(),
+    status: v.union(v.literal("Scheduled"), v.literal("InProgress"), v.literal("Completed"), v.literal("Cancelled")),
   },
   handler: async (ctx, args) => {
     const currentUser = await getCurrentUser(ctx);
@@ -166,7 +180,7 @@ export const updateStatus = mutation({
     }
 
     await ctx.db.patch(args.meetingId, {
-      status: args.status as any,
+      status: args.status,
       updatedAt: Date.now(),
     });
 

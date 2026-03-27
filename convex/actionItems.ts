@@ -37,10 +37,19 @@ export const listByMeeting = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
 
-    return await ctx.db
+    const items = await ctx.db
       .query("actionItems")
       .withIndex("by_meetingId", (q) => q.eq("meetingId", args.meetingId))
       .collect();
+
+    const enriched = await Promise.all(
+      items.map(async (item) => {
+        const assignee = await ctx.db.get(item.assigneeId);
+        return { ...item, assigneeName: assignee?.name ?? "Unknown" };
+      })
+    );
+
+    return enriched;
   },
 });
 
@@ -62,7 +71,14 @@ export const listByAssignee = query({
       items = items.filter((i) => i.status === args.status);
     }
 
-    return items;
+    const enriched = await Promise.all(
+      items.map(async (item) => {
+        const assignee = await ctx.db.get(item.assigneeId);
+        return { ...item, assigneeName: assignee?.name ?? "Unknown" };
+      })
+    );
+
+    return enriched;
   },
 });
 
@@ -101,7 +117,7 @@ export const create = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     assigneeId: v.id("users"),
-    meetingId: v.optional(v.id("meetings")),
+    meetingId: v.id("meetings"),
     dueDate: v.number(),
     agendaItemId: v.optional(v.id("agendaItems")),
   },
@@ -111,7 +127,7 @@ export const create = mutation({
 
     const now = Date.now();
     const itemId = await ctx.db.insert("actionItems", {
-      meetingId: args.meetingId!,
+      meetingId: args.meetingId,
       title: args.title,
       description: args.description,
       assigneeId: args.assigneeId,

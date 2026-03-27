@@ -82,7 +82,7 @@ export function ActionItemsTable({
             <TableCell className="text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5" />
-                {(item as any).assigneeName ?? "Assigned"}
+                {item.assigneeName ?? "Assigned"}
               </div>
             </TableCell>
             <TableCell>

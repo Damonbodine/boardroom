@@ -8,7 +8,7 @@ export default function SignInPage() {
           <h1 className="font-serif text-3xl font-bold text-primary">Board<span className="text-accent">Room</span></h1>
           <p className="mt-2 text-sm text-muted-foreground">Nonprofit Board Governance Portal</p>
         </div>
-        <SignIn afterSignInUrl="/dashboard" />
+        <SignIn fallbackRedirectUrl="/dashboard" />
       </div>
     </div>
   );

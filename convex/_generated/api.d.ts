@@ -21,6 +21,8 @@ import type * as helpers from "../helpers.js";
 import type * as meetings from "../meetings.js";
 import type * as motions from "../motions.js";
 import type * as notifications from "../notifications.js";
+import type * as qaCheck from "../qaCheck.js";
+import type * as qaSetup from "../qaSetup.js";
 import type * as seed from "../seed.js";
 import type * as users from "../users.js";
 import type * as votes from "../votes.js";
@@ -45,6 +47,8 @@ declare const fullApi: ApiFromModules<{
   meetings: typeof meetings;
   motions: typeof motions;
   notifications: typeof notifications;
+  qaCheck: typeof qaCheck;
+  qaSetup: typeof qaSetup;
   seed: typeof seed;
   users: typeof users;
   votes: typeof votes;

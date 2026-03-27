@@ -9,13 +9,13 @@ export const listMine = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return [];
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
       .unique();
-    if (!user) throw new Error("USER_NOT_FOUND");
+    if (!user) return [];
 
     const limit = args.limit ?? 20;
     return await ctx.db
@@ -30,7 +30,7 @@ export const getUnreadCount = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("UNAUTHORIZED");
+    if (!identity) return { count: 0 };
 
     const user = await ctx.db
       .query("users")
