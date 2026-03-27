@@ -8,13 +8,47 @@
  * @module
  */
 
+import type * as actionItems from "../actionItems.js";
+import type * as agendaItems from "../agendaItems.js";
+import type * as auditLogs from "../auditLogs.js";
+import type * as committeeMembers from "../committeeMembers.js";
+import type * as committees from "../committees.js";
+import type * as crons from "../crons.js";
+import type * as dashboard from "../dashboard.js";
+import type * as documents from "../documents.js";
+import type * as files from "../files.js";
+import type * as helpers from "../helpers.js";
+import type * as meetings from "../meetings.js";
+import type * as motions from "../motions.js";
+import type * as notifications from "../notifications.js";
+import type * as seed from "../seed.js";
+import type * as users from "../users.js";
+import type * as votes from "../votes.js";
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  actionItems: typeof actionItems;
+  agendaItems: typeof agendaItems;
+  auditLogs: typeof auditLogs;
+  committeeMembers: typeof committeeMembers;
+  committees: typeof committees;
+  crons: typeof crons;
+  dashboard: typeof dashboard;
+  documents: typeof documents;
+  files: typeof files;
+  helpers: typeof helpers;
+  meetings: typeof meetings;
+  motions: typeof motions;
+  notifications: typeof notifications;
+  seed: typeof seed;
+  users: typeof users;
+  votes: typeof votes;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.
