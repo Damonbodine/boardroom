@@ -10,6 +10,7 @@
 
 import type * as actionItems from "../actionItems.js";
 import type * as agendaItems from "../agendaItems.js";
+import type * as ai from "../ai.js";
 import type * as auditLogs from "../auditLogs.js";
 import type * as committeeMembers from "../committeeMembers.js";
 import type * as committees from "../committees.js";
@@ -36,6 +37,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   actionItems: typeof actionItems;
   agendaItems: typeof agendaItems;
+  ai: typeof ai;
   auditLogs: typeof auditLogs;
   committeeMembers: typeof committeeMembers;
   committees: typeof committees;
