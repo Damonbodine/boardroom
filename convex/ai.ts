@@ -35,17 +35,18 @@ async function callOpenRouter(prompt: string): Promise<string> {
 
 export const generateMinutes = action({
   args: { meetingId: v.id("meetings") },
-  handler: async (ctx, args) => {
-    const meeting = await ctx.runQuery(api.meetings.get, {
+  returns: v.string(),
+  handler: async (ctx, args): Promise<string> => {
+    const meeting: any = await ctx.runQuery(api.meetings.get, {
       meetingId: args.meetingId,
     });
     if (!meeting) throw new Error("MEETING_NOT_FOUND");
 
-    const motions = await ctx.runQuery(api.motions.listByMeeting, {
+    const motions: any[] = await ctx.runQuery(api.motions.listByMeeting, {
       meetingId: args.meetingId,
     });
 
-    const actionItems = await ctx.runQuery(api.actionItems.listByMeeting, {
+    const actionItems: any[] = await ctx.runQuery(api.actionItems.listByMeeting, {
       meetingId: args.meetingId,
     });
 
@@ -103,13 +104,14 @@ Use formal parliamentary language.`;
 
 export const generateBriefing = action({
   args: { meetingId: v.id("meetings") },
-  handler: async (ctx, args) => {
-    const meeting = await ctx.runQuery(api.meetings.get, {
+  returns: v.string(),
+  handler: async (ctx, args): Promise<string> => {
+    const meeting: any = await ctx.runQuery(api.meetings.get, {
       meetingId: args.meetingId,
     });
     if (!meeting) throw new Error("MEETING_NOT_FOUND");
 
-    const documents = await ctx.runQuery(api.documents.list, {
+    const documents: any[] = await ctx.runQuery(api.documents.list, {
       meetingId: args.meetingId,
     });
 
@@ -154,14 +156,15 @@ Keep the tone professional and concise.`;
 
 export const draftFollowUp = action({
   args: { actionItemId: v.id("actionItems") },
-  handler: async (ctx, args) => {
-    const allItems = await ctx.runQuery(api.actionItems.list, {});
+  returns: v.string(),
+  handler: async (ctx, args): Promise<string> => {
+    const allItems: any[] = await ctx.runQuery(api.actionItems.list, {});
     const actionItem = (allItems ?? []).find(
       (i: any) => i._id === args.actionItemId
     );
     if (!actionItem) throw new Error("ACTION_ITEM_NOT_FOUND");
 
-    const meeting = await ctx.runQuery(api.meetings.get, {
+    const meeting: any = await ctx.runQuery(api.meetings.get, {
       meetingId: actionItem.meetingId,
     });
 
@@ -188,17 +191,18 @@ Keep the tone respectful and collaborative, not accusatory.`;
 
 export const analyzeMotionImpact = action({
   args: { motionId: v.id("motions") },
-  handler: async (ctx, args) => {
-    const motionData = await ctx.runQuery(api.motions.get, {
+  returns: v.string(),
+  handler: async (ctx, args): Promise<string> => {
+    const motionData: any = await ctx.runQuery(api.motions.get, {
       motionId: args.motionId,
     });
     if (!motionData) throw new Error("MOTION_NOT_FOUND");
 
-    const meeting = await ctx.runQuery(api.meetings.get, {
+    const meeting: any = await ctx.runQuery(api.meetings.get, {
       meetingId: motionData.meetingId,
     });
 
-    const prompt = `You are a nonprofit governance expert. Analyze the following motion and provide an impact assessment:
+    const prompt: string = `You are a nonprofit governance expert. Analyze the following motion and provide an impact assessment:
 
 Motion: ${motionData.title}
 Description: ${motionData.description}
