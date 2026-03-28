@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import {
 import { StatusBadge } from "@/components/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin } from "lucide-react";
+import { withPreservedDemoQuery } from "@/lib/demo";
 
 const typeColors: Record<string, string> = {
   Regular: "border-info/30 bg-info/15 text-info",
@@ -24,6 +26,7 @@ const typeColors: Record<string, string> = {
 
 export function MeetingsTable() {
   const meetings = useQuery(api.meetings.list, {});
+  const searchParams = useSearchParams();
 
   if (!meetings) {
     return <div className="p-8 text-center text-muted-foreground">Loading meetings...</div>;
@@ -60,7 +63,7 @@ export function MeetingsTable() {
             >
               <TableCell>
                 <Link
-                  href={`/meetings/${meeting._id}`}
+                  href={withPreservedDemoQuery(`/meetings/${meeting._id}`, searchParams)}
                   className="font-medium text-primary hover:text-accent transition-colors"
                 >
                   {meeting.title}

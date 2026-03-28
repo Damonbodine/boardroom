@@ -114,14 +114,38 @@ export function DemoMode() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const demoId = searchParams.get("demo");
+  const stepParam = searchParams.get("step");
   const scenario = useMemo(() => getScenarioById(demoId), [demoId]);
   const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
-    setStepIndex(0);
-  }, [demoId]);
+    if (!scenario) {
+      setStepIndex(0);
+      return;
+    }
+
+    const parsedStep = Number(stepParam ?? "1");
+    const nextStepIndex =
+      Number.isFinite(parsedStep) && parsedStep > 0
+        ? Math.min(parsedStep - 1, scenario.steps.length - 1)
+        : 0;
+
+    setStepIndex((prev) => (prev === nextStepIndex ? prev : nextStepIndex));
+  }, [demoId, scenario, stepParam]);
 
   const currentStep = scenario?.steps[stepIndex];
+
+  useEffect(() => {
+    if (!scenario) return;
+
+    const nextStepParam = String(stepIndex + 1);
+    if (stepParam === nextStepParam) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("demo", scenario.id);
+    params.set("step", nextStepParam);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [pathname, router, scenario, searchParams, stepIndex, stepParam]);
 
   useEffect(() => {
     if (!currentStep?.target) return;
@@ -148,20 +172,23 @@ export function DemoMode() {
     const params = new URLSearchParams(searchParams.toString());
     if (nextDemo) {
       params.set("demo", nextDemo);
+      params.set("step", String(stepIndex + 1));
     } else {
       params.delete("demo");
+      params.delete("step");
     }
     const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname);
-  }
-
-  function goToStep(index: number) {
-    setStepIndex(index);
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
 
   function nextStep() {
     if (!onExpectedRoute) {
-      router.push(currentStep.routePrefix === "/meetings/" ? "/meetings" : currentStep.routePrefix);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("demo", scenario.id);
+      params.set("step", String(stepIndex + 1));
+      const route =
+        currentStep.routePrefix === "/meetings/" ? "/meetings" : currentStep.routePrefix;
+      router.push(`${route}?${params.toString()}`);
       return;
     }
 
@@ -178,7 +205,7 @@ export function DemoMode() {
 
   function restartScenario() {
     setStepIndex(0);
-    router.push("/dashboard?demo=quarterly-board-prep");
+    router.push("/dashboard?demo=quarterly-board-prep&step=1");
   }
 
   function exitDemo() {
@@ -282,7 +309,7 @@ export function DemoModeStartButton({
     <Button
       variant="outline"
       className={cn("gap-2", className)}
-      onClick={() => router.push("/dashboard?demo=quarterly-board-prep")}
+      onClick={() => router.push("/dashboard?demo=quarterly-board-prep&step=1")}
     >
       <PlayCircle className="h-4 w-4" />
       Start guided demo

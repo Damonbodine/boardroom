@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { withPreservedDemoQuery } from "@/lib/demo";
 import { Badge } from "@/components/ui/badge";
 import {
   Sidebar,
@@ -50,6 +51,7 @@ const memberNav = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const currentUser = useQuery(api.users.getCurrent, {});
   const unreadCount = useQuery(api.notifications.getUnreadCount, {});
 
@@ -58,7 +60,10 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r-0">
       <SidebarHeader className="px-6 py-5 border-b border-sidebar-border">
-        <Link href="/dashboard" className="flex items-center gap-3">
+        <Link
+          href={withPreservedDemoQuery("/dashboard", searchParams)}
+          className="flex items-center gap-3"
+        >
           <Gavel className="h-7 w-7 text-sidebar-primary" />
           <span className="font-serif text-xl font-bold text-sidebar-foreground tracking-tight">
             BoardRoom
@@ -73,7 +78,7 @@ export function AppSidebar() {
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  render={<Link href={item.href} />}
+                  render={<Link href={withPreservedDemoQuery(item.href, searchParams)} />}
                   isActive={isActive}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
