@@ -11,10 +11,10 @@ import { Calendar, Clock, MapPin, Edit, Play, CheckCircle, XCircle } from "lucid
 import Link from "next/link";
 
 const typeColors: Record<string, string> = {
-  Regular: "bg-blue-100 text-blue-800",
-  Special: "bg-purple-100 text-purple-800",
-  Emergency: "bg-red-100 text-red-800",
-  AnnualGeneral: "bg-green-100 text-green-800",
+  Regular: "border-info/30 bg-info/15 text-info",
+  Special: "border-primary/30 bg-primary/15 text-primary",
+  Emergency: "border-destructive/30 bg-destructive/15 text-destructive",
+  AnnualGeneral: "border-success/30 bg-success/15 text-success",
 };
 
 export function MeetingDetailHeader({ meetingId }: { meetingId: Id<"meetings"> }) {
@@ -39,7 +39,7 @@ export function MeetingDetailHeader({ meetingId }: { meetingId: Id<"meetings"> }
   };
 
   return (
-    <Card className="border">
+    <Card className="border" data-demo="meeting-detail-header">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="space-y-2">

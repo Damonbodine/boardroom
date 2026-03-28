@@ -30,7 +30,10 @@ export function DashboardStats() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div
+      data-demo="dashboard-stats"
+      className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+    >
       {statConfig.map((stat) => (
         <Card key={stat.key} className="border">
           <CardContent className="pt-6">

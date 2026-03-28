@@ -19,7 +19,7 @@ export default function MeetingDetailPage() {
     <div className="space-y-6">
       <MeetingDetailHeader meetingId={meetingId} />
       <Tabs defaultValue="agenda">
-        <TabsList>
+        <TabsList data-demo="meeting-workspace-tabs">
           <TabsTrigger value="agenda">Agenda</TabsTrigger>
           <TabsTrigger value="motions">Motions</TabsTrigger>
           <TabsTrigger value="action-items">Action Items</TabsTrigger>

@@ -40,54 +40,60 @@ export function MeetingsTable() {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="font-serif">Title</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead>Time</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Status</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {meetings.map((meeting) => (
-          <TableRow key={meeting._id} className="hover:bg-muted/50">
-            <TableCell>
-              <Link
-                href={`/meetings/${meeting._id}`}
-                className="font-medium text-primary hover:text-accent transition-colors"
-              >
-                {meeting.title}
-              </Link>
-            </TableCell>
-            <TableCell className="text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" />
-                {new Date(meeting.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </div>
-            </TableCell>
-            <TableCell className="text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                {meeting.startTime}
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline" className={typeColors[meeting.meetingType] || ""}>
-                {meeting.meetingType === "AnnualGeneral" ? "AGM" : meeting.meetingType}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <StatusBadge status={meeting.status} />
-            </TableCell>
+    <div data-demo="meetings-table">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="font-serif">Title</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Time</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Status</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {meetings.map((meeting, index) => (
+            <TableRow
+              key={meeting._id}
+              className="hover:bg-muted/50"
+              data-demo={index === 0 ? "primary-meeting-row" : undefined}
+            >
+              <TableCell>
+                <Link
+                  href={`/meetings/${meeting._id}`}
+                  className="font-medium text-primary hover:text-accent transition-colors"
+                >
+                  {meeting.title}
+                </Link>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {new Date(meeting.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </div>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
+                  {meeting.startTime}
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline" className={typeColors[meeting.meetingType] || ""}>
+                  {meeting.meetingType === "AnnualGeneral" ? "AGM" : meeting.meetingType}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <StatusBadge status={meeting.status} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

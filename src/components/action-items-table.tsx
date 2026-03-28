@@ -53,62 +53,64 @@ export function ActionItemsTable({
   };
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="font-serif">Title</TableHead>
-          <TableHead>Assignee</TableHead>
-          <TableHead>Due Date</TableHead>
-          <TableHead>Status</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {allItems.map((item) => (
-          <TableRow
-            key={item._id}
-            className={cn(
-              "hover:bg-muted/50",
-              isOverdue(item.dueDate, item.status) &&
-                "border-l-2 border-l-destructive/60 bg-destructive/8"
-            )}
-          >
-            <TableCell>
-              <div className="flex items-center gap-2">
-                {isOverdue(item.dueDate, item.status) && (
-                  <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
-                )}
-                <span className="font-medium">{item.title}</span>
-              </div>
-            </TableCell>
-            <TableCell className="text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5" />
-                {item.assigneeName ?? "Assigned"}
-              </div>
-            </TableCell>
-            <TableCell>
-              <div
-                className={cn(
-                  "flex items-center gap-1.5 text-sm",
-                  isOverdue(item.dueDate, item.status)
-                    ? "text-destructive font-medium"
-                    : "text-muted-foreground"
-                )}
-              >
-                <Clock className="h-3.5 w-3.5" />
-                {new Date(item.dueDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </div>
-            </TableCell>
-            <TableCell>
-              <StatusBadge status={item.status} />
-            </TableCell>
+    <div data-demo={meetingId ? undefined : "dashboard-action-items"}>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="font-serif">Title</TableHead>
+            <TableHead>Assignee</TableHead>
+            <TableHead>Due Date</TableHead>
+            <TableHead>Status</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {allItems.map((item) => (
+            <TableRow
+              key={item._id}
+              className={cn(
+                "hover:bg-muted/50",
+                isOverdue(item.dueDate, item.status) &&
+                  "border-l-2 border-l-destructive/60 bg-destructive/8"
+              )}
+            >
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  {isOverdue(item.dueDate, item.status) && (
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
+                  )}
+                  <span className="font-medium">{item.title}</span>
+                </div>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5" />
+                  {item.assigneeName ?? "Assigned"}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div
+                  className={cn(
+                    "flex items-center gap-1.5 text-sm",
+                    isOverdue(item.dueDate, item.status)
+                      ? "font-medium text-destructive"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  <Clock className="h-3.5 w-3.5" />
+                  {new Date(item.dueDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </div>
+              </TableCell>
+              <TableCell>
+                <StatusBadge status={item.status} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
