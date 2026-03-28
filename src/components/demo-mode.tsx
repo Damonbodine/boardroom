@@ -14,6 +14,7 @@ type DemoStep = {
   whyItMatters: string;
   routePrefix: string;
   target?: string;
+  actionTarget?: string;
   actionLabel?: string;
 };
 
@@ -83,6 +84,7 @@ const BOARDROOM_SCENARIO: DemoScenario = {
         "This step shows the app is built for real board operations, not just list pages.",
       routePrefix: "/meetings/",
       target: "[data-demo='meeting-detail-header']",
+      actionTarget: "[data-demo='primary-meeting-link']",
     },
     {
       id: "meeting-workspace",
@@ -183,6 +185,14 @@ export function DemoMode() {
 
   function nextStep() {
     if (!onExpectedRoute) {
+      const actionElement = currentStep.actionTarget
+        ? document.querySelector<HTMLElement>(currentStep.actionTarget)
+        : null;
+      if (actionElement) {
+        actionElement.click();
+        return;
+      }
+
       const params = new URLSearchParams(searchParams.toString());
       params.set("demo", scenario.id);
       params.set("step", String(stepIndex + 1));
@@ -192,9 +202,12 @@ export function DemoMode() {
       return;
     }
 
-    if (!isLastStep) {
-      setStepIndex((prev) => prev + 1);
+    if (isLastStep) {
+      exitDemo();
+      return;
     }
+
+    setStepIndex((prev) => prev + 1);
   }
 
   function previousStep() {

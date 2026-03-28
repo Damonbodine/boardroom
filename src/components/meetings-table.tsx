@@ -65,6 +65,7 @@ export function MeetingsTable() {
                 <Link
                   href={withPreservedDemoQuery(`/meetings/${meeting._id}`, searchParams)}
                   className="font-medium text-primary hover:text-accent transition-colors"
+                  data-demo={index === 0 ? "primary-meeting-link" : undefined}
                 >
                   {meeting.title}
                 </Link>
