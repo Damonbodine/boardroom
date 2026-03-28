@@ -6,10 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Gavel, AlertTriangle, Users } from "lucide-react";
 
 const statConfig = [
-  { key: "upcomingMeetings" as const, label: "Upcoming Meetings", icon: Calendar, color: "text-blue-600" },
-  { key: "pendingMotions" as const, label: "Open Motions", icon: Gavel, color: "text-amber-600" },
-  { key: "overdueActionItems" as const, label: "Overdue Items", icon: AlertTriangle, color: "text-red-600" },
-  { key: "activeMembers" as const, label: "Active Members", icon: Users, color: "text-green-600" },
+  { key: "upcomingMeetings" as const, label: "Upcoming Meetings", icon: Calendar, color: "text-info" },
+  { key: "pendingMotions" as const, label: "Open Motions", icon: Gavel, color: "text-warning" },
+  { key: "overdueActionItems" as const, label: "Overdue Items", icon: AlertTriangle, color: "text-destructive" },
+  { key: "activeMembers" as const, label: "Active Members", icon: Users, color: "text-success" },
 ];
 
 export function DashboardStats() {

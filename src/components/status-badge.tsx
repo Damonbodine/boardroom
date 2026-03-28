@@ -3,26 +3,26 @@ import { cn } from "@/lib/utils";
 
 const statusStyles: Record<string, string> = {
   // Meeting statuses
-  Scheduled: "bg-blue-100 text-blue-800 border-blue-200",
-  InProgress: "bg-amber-100 text-amber-800 border-amber-200",
-  Completed: "bg-green-100 text-green-800 border-green-200",
+  Scheduled: "border-info/30 bg-info/15 text-info",
+  InProgress: "border-warning/30 bg-warning/15 text-warning",
+  Completed: "border-success/30 bg-success/15 text-success",
   Cancelled: "bg-muted text-muted-foreground border-border",
 
   // Motion statuses
-  Proposed: "bg-blue-100 text-blue-800 border-blue-200",
-  Seconded: "bg-purple-100 text-purple-800 border-purple-200",
-  Voting: "bg-amber-100 text-amber-800 border-amber-200",
-  Passed: "bg-green-100 text-green-800 border-green-200",
-  Failed: "bg-red-100 text-red-800 border-red-200",
+  Proposed: "border-info/30 bg-info/15 text-info",
+  Seconded: "border-primary/30 bg-primary/15 text-primary",
+  Voting: "border-warning/30 bg-warning/15 text-warning",
+  Passed: "border-success/30 bg-success/15 text-success",
+  Failed: "border-destructive/30 bg-destructive/15 text-destructive",
   Tabled: "bg-muted text-muted-foreground border-border",
   Withdrawn: "bg-muted text-muted-foreground border-border",
 
   // Action item statuses
-  Open: "bg-blue-100 text-blue-800 border-blue-200",
-  Overdue: "bg-red-100 text-red-800 border-red-200",
+  Open: "border-info/30 bg-info/15 text-info",
+  Overdue: "border-destructive/30 bg-destructive/15 text-destructive",
 
   // Agenda item statuses
-  Pending: "bg-blue-100 text-blue-800 border-blue-200",
+  Pending: "border-info/30 bg-info/15 text-info",
   Deferred: "bg-muted text-muted-foreground border-border",
 };
 

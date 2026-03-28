@@ -14,6 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuBadge,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
@@ -72,7 +73,8 @@ export function AppSidebar() {
             return (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  
+                  render={<Link href={item.href} />}
+                  isActive={isActive}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
@@ -80,15 +82,15 @@ export function AppSidebar() {
                       : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
                   )}
                 >
-                  <Link href={item.href}>
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                    {item.label === "Notifications" && unreadCount && unreadCount.count > 0 && (
-                      <Badge className="ml-auto bg-accent text-accent-foreground text-xs px-1.5 py-0">
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                  {item.label === "Notifications" && unreadCount && unreadCount.count > 0 && (
+                    <SidebarMenuBadge>
+                      <Badge className="bg-accent text-accent-foreground text-xs px-1.5 py-0">
                         {unreadCount.count}
                       </Badge>
-                    )}
-                  </Link>
+                    </SidebarMenuBadge>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );

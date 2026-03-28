@@ -25,12 +25,12 @@ const actionIcons: Record<string, React.ElementType> = {
 };
 
 const actionColors: Record<string, string> = {
-  Create: "bg-green-100 text-green-700",
-  Update: "bg-blue-100 text-blue-700",
-  Delete: "bg-red-100 text-red-700",
-  StatusChange: "bg-amber-100 text-amber-700",
-  Vote: "bg-purple-100 text-purple-700",
-  Upload: "bg-teal-100 text-teal-700",
+  Create: "bg-success/15 text-success",
+  Update: "bg-info/15 text-info",
+  Delete: "bg-destructive/15 text-destructive",
+  StatusChange: "bg-warning/15 text-warning",
+  Vote: "bg-primary/15 text-primary",
+  Upload: "bg-info/15 text-info",
   Login: "bg-muted text-muted-foreground",
 };
 

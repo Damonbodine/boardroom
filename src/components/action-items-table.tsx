@@ -17,9 +17,9 @@ import { CheckSquare, AlertTriangle, Clock, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const priorityConfig: Record<string, { color: string; label: string }> = {
-  high: { color: "bg-red-100 text-red-800", label: "High" },
-  medium: { color: "bg-amber-100 text-amber-800", label: "Medium" },
-  low: { color: "bg-blue-100 text-blue-800", label: "Low" },
+  high: { color: "border-destructive/30 bg-destructive/15 text-destructive", label: "High" },
+  medium: { color: "border-warning/30 bg-warning/15 text-warning", label: "Medium" },
+  low: { color: "border-info/30 bg-info/15 text-info", label: "Low" },
 };
 
 export function ActionItemsTable({
@@ -68,7 +68,8 @@ export function ActionItemsTable({
             key={item._id}
             className={cn(
               "hover:bg-muted/50",
-              isOverdue(item.dueDate, item.status) && "bg-red-50/50"
+              isOverdue(item.dueDate, item.status) &&
+                "border-l-2 border-l-destructive/60 bg-destructive/8"
             )}
           >
             <TableCell>
@@ -90,7 +91,7 @@ export function ActionItemsTable({
                 className={cn(
                   "flex items-center gap-1.5 text-sm",
                   isOverdue(item.dueDate, item.status)
-                    ? "text-red-600 font-medium"
+                    ? "text-destructive font-medium"
                     : "text-muted-foreground"
                 )}
               >
